@@ -20,7 +20,7 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 # Application definition
 
-INSTALLED_APPS = [
+DEFAULT_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -28,6 +28,17 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 ]
+
+THIRD_PARTY_APPS = [
+    "rest_framework",
+    "drf_spectacular",
+]
+
+MY_APPS = [
+    "account",
+]
+
+INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + MY_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -88,6 +99,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = "account.User"
+
 # Internationalization
 
 LANGUAGE_CODE = "en-us"
@@ -105,3 +118,28 @@ STATIC_URL = "static/"
 # Default primary key field type
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Django rest framework settings
+
+JWT_PRIVATE_KEY_PATH = env.str("JWT_PRIVATE_KEY_PATH")
+JWT_PUBLIC_KEY_PATH = env.str("JWT_PUBLIC_KEY_PATH")
+
+with open(JWT_PRIVATE_KEY_PATH, "r") as private:
+    JWT_PRIVATE_KEY = private.read()
+
+with open(JWT_PUBLIC_KEY_PATH, "r") as public:
+    JWT_PUBLIC_KEY = public.read()
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework_simplejwt.authentication.JWTAuthentication"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "PAGE_SIZE": 10,
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Your Project API",
+    "DESCRIPTION": "Your project description",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
