@@ -1,8 +1,11 @@
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 
 from core.base_serializer import BaseDataSerializer
 from messenger.models import Conversation, Message
-from rest_framework.reverse import reverse
+
+
+# ========== Start conversation list serializer ==========
 
 
 class ConversationLinkSerializer(serializers.Serializer):
@@ -24,13 +27,18 @@ class ConversationDataSerializer(BaseDataSerializer):
     attributes = ConversationAttributeSerializer(source="*")
 
 
+# ========== End conversation list serializer ==========
+
+# ========== Start conversation detail serializer ==========
+
+
 class ConversationDetailLinkSerializer(serializers.Serializer):
-    self = serializers.SerializerMethodField()
+    conversation = serializers.SerializerMethodField()
     conversation_member = serializers.SerializerMethodField()
 
-    def get_self(self, obj):
+    def get_conversation(self, obj):
         request = self.context.get("request")
-        return reverse("conversation-detail", kwargs={"conversation_id": obj.pk}, request=request)
+        return reverse("conversation-detail", kwargs={"conversation_id": obj.conversation.pk}, request=request)
 
     def get_conversation_member(self, obj):
         request = self.context.get("request")
@@ -46,3 +54,5 @@ class ConversationDetailAttributeSerializer(serializers.ModelSerializer):
 class ConversationDetailDataSerializer(BaseDataSerializer):
     links = ConversationDetailLinkSerializer(source="*")
     attributes = ConversationDetailAttributeSerializer(source="*")
+
+# ========== End conversation detail serializer ==========

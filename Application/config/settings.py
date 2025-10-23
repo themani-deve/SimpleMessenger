@@ -35,6 +35,7 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     "cryptography",
     "django_filters",
+    "channels",
 ]
 
 MY_APPS = [
@@ -71,7 +72,16 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "config.wsgi.application"
+ASGI_APPLICATION = "config.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(env.str("REDIS_HOST"), env.int("REDIS_PORT"))],
+        },
+    },
+}
 
 # Database
 
@@ -127,6 +137,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 JWT_PRIVATE_KEY_PATH = env.str("JWT_PRIVATE_KEY_PATH")
 JWT_PUBLIC_KEY_PATH = env.str("JWT_PUBLIC_KEY_PATH")
+JWT_ALGORITHM = env.str("JWT_ALGORITHM")
 
 with open(JWT_PRIVATE_KEY_PATH, "r") as private:
     JWT_PRIVATE_KEY = private.read()
@@ -146,7 +157,7 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=env.int("ACCESS_TOKEN_LIFETIME_MINS")),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=env.int("REFRESH_TOKEN_LIFETIME_DAYS")),
-    "ALGORITHM": env.str("JWT_ALGORITHM"),
+    "ALGORITHM": JWT_ALGORITHM,
     "SIGNING_KEY": JWT_PRIVATE_KEY,
     "VERIFYING_KEY": JWT_PUBLIC_KEY,
     "AUTH_HEADER_TYPES": env.list("AUTH_HEADER_TYPES"),
