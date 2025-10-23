@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 
 from account.models import User
 from core.base_serializer import BaseDataSerializer
@@ -23,6 +24,10 @@ class TokenDataSerializer(serializers.Serializer):
 
 class ProfileLinkSerializer(serializers.Serializer):
     self = serializers.HyperlinkedIdentityField(view_name="user-profile", lookup_field="pk")
+    conversation = serializers.SerializerMethodField()
+
+    def get_conversation(self, obj):
+        return reverse(viewname="new-private-conversation", request=self.context.get("request"))
 
 
 class ProfileAttributeSerializer(serializers.ModelSerializer):

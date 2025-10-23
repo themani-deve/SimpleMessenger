@@ -27,7 +27,7 @@ class AuthenticationService:
 
         return {"detail": "Code has been sent you."}
 
-    def login(self, phone_number: str, otp_code: str) -> dict:
+    def verify_otp(self, phone_number: str, otp_code: str) -> dict:
         """
         This method is responsible for receiving the OTP code, checking its validity, and as a result
         returning access and refresh tokens.

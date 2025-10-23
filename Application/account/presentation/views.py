@@ -1,20 +1,21 @@
 from rest_framework import status, generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from account.docs import SentOtpViewDoc, LoginViewDoc, ProfileViewDoc, OtherUserProfileViewDoc
+from account.docs import SentOtpViewDoc, LoginViewDoc, ProfileViewDoc, OtherUserProfileViewDoc, GetListUserViewDoc
 from account.models import User
 from account.services.authentication import AuthenticationService
 from core.base_serializer import DetailResponseSerializer
 from core.base_view import BaseGenericView
-from .serializers.input import SentOtpSerializer, LoginSerializer
+from .serializers.input import SentOTPSerializer, VerifyOTPSerializer
 from .serializers.output import TokenDataSerializer, ProfileDataSerializer, ProfileAttributeSerializer
 
 
 @SentOtpViewDoc
-class SentOtpView(BaseGenericView):
-    serializer_class = SentOtpSerializer
+class SentOTPView(BaseGenericView):
+    permission_classes = [AllowAny]
+    serializer_class = SentOTPSerializer
     service_class = AuthenticationService
 
     def post(self, request: Request, *args, **kwargs):
@@ -27,14 +28,15 @@ class SentOtpView(BaseGenericView):
 
 
 @LoginViewDoc
-class LoginView(BaseGenericView):
-    serializer_class = LoginSerializer
+class VerifyOTPView(BaseGenericView):
+    permission_classes = [AllowAny]
+    serializer_class = VerifyOTPSerializer
     service_class = AuthenticationService
 
     def post(self, request: Request, *args, **kwargs):
         validated_data = self.get_validated_data()
 
-        tokens = self.get_service().login(**validated_data)
+        tokens = self.get_service().verify_otp(**validated_data)
         response = TokenDataSerializer(tokens).data
 
         return Response(data=response, status=status.HTTP_200_OK)
@@ -42,7 +44,6 @@ class LoginView(BaseGenericView):
 
 @ProfileViewDoc
 class ProfileView(generics.RetrieveUpdateAPIView):
-    permission_classes = [IsAuthenticated]
     http_method_names = ["get", "patch"]
 
     def get_serializer_class(self):
@@ -61,6 +62,13 @@ class ProfileView(generics.RetrieveUpdateAPIView):
         response = ProfileDataSerializer(data, context={"request": request}).data
 
         return Response(data=response, status=status.HTTP_200_OK)
+
+
+@GetListUserViewDoc
+class GetListUserView(generics.ListAPIView):
+    serializer_class = ProfileDataSerializer
+    queryset = User.objects.all()
+    filterset_fields = ["phone_number", "username"]
 
 
 @OtherUserProfileViewDoc

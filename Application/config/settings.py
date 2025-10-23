@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -32,10 +33,13 @@ DEFAULT_APPS = [
 THIRD_PARTY_APPS = [
     "rest_framework",
     "drf_spectacular",
+    "cryptography",
+    "django_filters",
 ]
 
 MY_APPS = [
     "account",
+    "messenger",
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + MY_APPS
@@ -132,14 +136,27 @@ with open(JWT_PUBLIC_KEY_PATH, "r") as public:
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework_simplejwt.authentication.JWTAuthentication"],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "PAGE_SIZE": 10,
 }
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=env.int("ACCESS_TOKEN_LIFETIME_MINS")),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=env.int("REFRESH_TOKEN_LIFETIME_DAYS")),
+    "ALGORITHM": env.str("JWT_ALGORITHM"),
+    "SIGNING_KEY": JWT_PRIVATE_KEY,
+    "VERIFYING_KEY": JWT_PUBLIC_KEY,
+    "AUTH_HEADER_TYPES": env.list("AUTH_HEADER_TYPES"),
+    "AUTH_HEADER_NAME": env.str("AUTH_HEADER_NAME"),
+    "USER_ID_FIELD": "id",
+    "UPDATE_LAST_LOGIN": True,
+}
+
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Your Project API",
-    "DESCRIPTION": "Your project description",
+    "TITLE": "Simple Messenger API",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }

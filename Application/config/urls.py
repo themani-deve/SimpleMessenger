@@ -6,6 +6,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 APPs_URLs = [
     path("admin/", admin.site.urls),
     path("api/accounts/", include("account.presentation.urls")),
+    path("api/conversation/", include("messenger.presentation.urls")),
 ]
 
 DOC_URLs = [
