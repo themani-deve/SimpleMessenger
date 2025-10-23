@@ -8,7 +8,7 @@ from account.models import User
 from account.services.authentication import AuthenticationService
 from core.base_serializer import DetailResponseSerializer
 from core.base_view import BaseGenericView
-from .serializers.input import SentOTPSerializer, VerifyOTPSerializer
+from .serializers.input import SentOTPSerializer, VerifyOTPSerializer, UpdateProfileSerializer
 from .serializers.output import TokenDataSerializer, ProfileDataSerializer, ProfileAttributeSerializer
 
 
@@ -48,7 +48,7 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 
     def get_serializer_class(self):
         if self.request.method == "PATCH":
-            return ProfileAttributeSerializer
+            return UpdateProfileSerializer
         return ProfileDataSerializer
 
     def get_object(self):

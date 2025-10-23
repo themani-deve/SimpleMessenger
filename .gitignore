@@ -1,5 +1,7 @@
 .venv
 __pycache__
 .idea
+static
+uploaded_files
 **/migrations/*
 !**/migrations/__init__.py

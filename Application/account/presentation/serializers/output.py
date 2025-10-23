@@ -24,7 +24,14 @@ class TokenDataSerializer(serializers.Serializer):
 
 class ProfileLinkSerializer(serializers.Serializer):
     self = serializers.HyperlinkedIdentityField(view_name="user-profile", lookup_field="pk")
+    profile_image = serializers.SerializerMethodField()
     conversation = serializers.SerializerMethodField()
+
+    def get_profile_image(self, obj):
+        request = self.context.get('request')
+        if obj.profile_image:
+            return request.build_absolute_uri(obj.profile_image.url)
+        return None
 
     def get_conversation(self, obj):
         return reverse(viewname="new-private-conversation", request=self.context.get("request"))
@@ -34,7 +41,6 @@ class ProfileAttributeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "first_name", "last_name", "phone_number", "username"]
-        read_only_fields = ["id", "phone_number"]
 
 
 class ProfileDataSerializer(BaseDataSerializer):

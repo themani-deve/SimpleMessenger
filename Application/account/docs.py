@@ -1,7 +1,7 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResponse
 
 from core.base_serializer import DetailResponseSerializer
-from .presentation.serializers.input import SentOTPSerializer, VerifyOTPSerializer
+from .presentation.serializers.input import SentOTPSerializer, VerifyOTPSerializer, UpdateProfileSerializer
 from .presentation.serializers.output import TokenDataSerializer, ProfileDataSerializer, ProfileAttributeSerializer
 
 SentOtpViewDoc = extend_schema_view(
@@ -41,7 +41,7 @@ ProfileViewDoc = extend_schema_view(
         summary="Update user profile",
         description="This API is used to update user profile information.",
         tags=["Dashboard"],
-        request=ProfileAttributeSerializer,
+        request=UpdateProfileSerializer,
         responses={
             200: OpenApiResponse(response=ProfileDataSerializer, description="User profile updated successfully."),
         },

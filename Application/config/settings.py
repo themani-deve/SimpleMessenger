@@ -1,3 +1,4 @@
+import os
 from datetime import timedelta
 from pathlib import Path
 
@@ -128,6 +129,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "static"
+STATICFILES_DIRS = []
+
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "uploaded_files"
 
 # Default primary key field type
 

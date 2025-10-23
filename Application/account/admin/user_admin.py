@@ -15,7 +15,12 @@ class UserAdmin(admin.ModelAdmin):
 
     fieldsets = [
         ["Basic information", {"fields": ["id", "first_name", "last_name", "username", "phone_number"]}],
-        ["Account information", {"fields": ["is_active", "is_staff", "is_superuser", "created_at", "updated_at"]}],
+        [
+            "Account information",
+            {
+                "fields": ["profile_image", "is_active", "is_staff", "is_superuser", "created_at", "updated_at"]
+            }
+        ],
     ]
 
     readonly_fields = ["id", "created_at", "updated_at"]
